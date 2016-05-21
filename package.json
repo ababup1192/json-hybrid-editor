@@ -1,0 +1,37 @@
+{
+  "name": "typescript-react-boilertemplate",
+  "author": "ababup1192",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "build": "webpack",
+    "test": "karma start"
+  },
+  "devDependencies": {
+    "ace": "^1.0.2",
+    "baconjs": "^0.7.84",
+    "chai": "^3.5.0",
+    "css-loader": "^0.23.1",
+    "html-webpack-plugin": "^2.17.0",
+    "jade": "^1.11.0",
+    "jade-loader": "^0.8.0",
+    "karma": "^0.13.22",
+    "karma-chai": "^0.1.0",
+    "karma-mocha": "^0.2.2",
+    "karma-mocha-reporter": "^2.0.0",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "karma-sinon": "^1.0.4",
+    "karma-webpack": "^1.7.0",
+    "mocha": "^2.4.5",
+    "phantomjs-prebuilt": "^2.1.7",
+    "react": "^15.0.2",
+    "react-dom": "^15.0.2",
+    "sinon": "^1.17.3",
+    "style-loader": "^0.13.1",
+    "ts-loader": "^0.8.1",
+    "tslint": "^3.7.1",
+    "typescript": "^1.8.9",
+    "typings": "^0.7.9",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1"
+  }
+}

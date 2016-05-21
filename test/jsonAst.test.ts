@@ -1,0 +1,156 @@
+import {JValue, JNumber, JString, JBool, JNull, JArray, JField, JObject, JsonAst} from "../src/scripts/jsonAst";
+
+describe("Json", () => {
+    describe("TextToAST", () => {
+        describe("JNumber", () => {
+            it("should return `JNumber`", () => {
+                const actual: JNumber = JsonAst.toAst(JSON.parse(JSON.stringify(123))) as JNumber;
+                chai.assert.strictEqual(actual.value, new JNumber(123).value);
+            });
+        });
+        describe("JString", () => {
+            it("should return `JString`", () => {
+                const actual: JString = JsonAst.toAst(JSON.parse(JSON.stringify("abc"))) as JString;
+                chai.assert.strictEqual(actual.value, new JString("abc").value);
+            });
+        });
+        describe("JBool", () => {
+            it("should return `JBool`", () => {
+                const actual: JBool = JsonAst.toAst(JSON.parse(JSON.stringify(true))) as JBool;
+                chai.assert.strictEqual(actual.value, new JBool(true).value);
+            });
+        });
+        describe("JNull", () => {
+            it("should return `JNull`", () => {
+                const actual: JNull = JsonAst.toAst(JSON.parse(JSON.stringify(null))) as JNull;
+                chai.assert.strictEqual(actual instanceof JNull, true);
+            });
+        });
+        describe("JArray", () => {
+            it("should return `JArray`", () => {
+                const jArray: JArray = JsonAst.toAst(
+                    JSON.parse(JSON.stringify([1, 2, 3, 4, 5]))
+                ) as JArray;
+                const actual: number[] = jArray.arr.map((v: JValue) => (v as JNumber).value);
+                chai.assert.strictEqual(JSON.stringify(actual), JSON.stringify([1, 2, 3, 4, 5]));
+            });
+        });
+        describe("JObject", () => {
+            it("should return `JObject`", () => {
+                const jObject: JObject = JsonAst.toAst(
+                    JSON.parse(JSON.stringify({ a: 123, b: 456, c: 789 }))) as JObject;
+                const actual: { name: string, value: number }[] = jObject.obj.map((v: JField) => {
+                    return { name: v.name, value: (v.value as JNumber).value };
+                });
+
+                chai.assert.strictEqual(JSON.stringify(actual), JSON.stringify([
+                    { name: "a", value: 123 },
+                    { name: "b", value: 456 },
+                    { name: "c", value: 789 }
+                ]));
+            });
+        });
+        describe("Complex JObject", () => {
+            it("should return `JObject`", () => {
+                const jObject: JObject = JsonAst.toAst(
+                    JSON.parse(JSON.stringify({ a: "start", b: { x: [1], y: [true], z: [null] }, c: "end" }))
+                ) as JObject;
+                const toObject: (jValue: JValue) => { name: string, value: any } = (jValue: JValue) => {
+                    if (jValue instanceof JNumber) {
+                        return { name: "", value: (jValue as JNumber).value };
+                    } else if (jValue instanceof JString) {
+                        return { name: "", value: (jValue as JString).value };
+                    } else if (jValue instanceof JBool) {
+                        return { name: "", value: (jValue as JBool).value };
+                    } else if (jValue instanceof JNull) {
+                        return { name: "", value: null };
+                    } else if (jValue instanceof JArray) {
+                        return { name: "", value: (jValue as JArray).arr.map((value: JValue) => toObject(value)) };
+                    } else {
+                        return {
+                            name: "", value: (jValue as JObject).obj.map((field: JField) => {
+                                return { name: field.name, value: toObject(field.value) };
+                            })
+                        };
+                    }
+                };
+
+                chai.assert.strictEqual(JSON.stringify(toObject(jObject)), JSON.stringify(
+                    {
+                        name: "", value: [
+                            { name: "a", value: { name: "", value: "start" } },
+                            {
+                                name: "b", value: {
+                                    name: "",
+                                    value: [
+                                        { name: "x", value: { name: "", value: [{ name: "", value: 1 }] } },
+                                        { name: "y", value: { name: "", value: [{ name: "", value: true }] } },
+                                        { name: "z", value: { name: "", value: [{ name: "", value: null }] } }
+                                    ],
+                                },
+                            },
+                            { name: "c", value: { name: "", value: "end" } }
+                        ],
+                    }
+                ));
+            });
+        });
+    });
+    describe("ASTToText", () => {
+        describe("JNumber", () => {
+            it("should return `number` text", () => {
+                const actual: string = new JNumber(123).toString();
+                chai.assert.strictEqual(actual, "123");
+            });
+        });
+        describe("JString", () => {
+            it("should return `string` text", () => {
+                const actual: string = new JString("abc").toString();
+                chai.assert.strictEqual(actual, `"abc"`);
+            });
+        });
+        describe("JBool", () => {
+            it("should return `bool` text", () => {
+                const actual: string = new JBool(true).toString();
+                chai.assert.strictEqual(actual, "true");
+            });
+        });
+        describe("JNull", () => {
+            it("should return `null` text", () => {
+                const actual: string = new JNull().toString();
+                chai.assert.strictEqual(actual, "null");
+            });
+        });
+        describe("JArray", () => {
+            it("should return `array` text", () => {
+                const actual: string = new JArray([new JNumber(1),
+                    new JNumber(2), new JNumber(3)]).toString();
+                chai.assert.strictEqual(actual, "[1, 2, 3]");
+            });
+        });
+        describe("JObject", () => {
+            it("should return `object` text", () => {
+                const actual: string = new JObject([
+                    new JField("a", new JNumber(123)),
+                    new JField("b", new JNumber(456)),
+                    new JField("c", new JNumber(789)),
+                ]).toString();
+                chai.assert.strictEqual(actual, `{a: 123, b: 456, c: 789}`);
+            });
+        });
+        describe("Complex JObject", () => {
+            it("should return `object` text", () => {
+                const actual: string = new JObject([
+                    new JField("a", new JString("start")),
+                    new JField("b", new JObject([
+                        new JField("x", new JArray([new JNumber(1)])),
+                        new JField("y", new JArray([new JBool(true)])),
+                        new JField("z", new JArray([new JNull()])),
+                    ])),
+                    new JField("c", new JString("end")),
+                ]).toString();
+                chai.assert.strictEqual(actual, `{a: "start", b: {x: [1], y: [true], z: [null]}, c: "end"}`);
+            });
+        });
+    });
+});
