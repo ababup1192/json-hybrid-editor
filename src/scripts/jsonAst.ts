@@ -5,8 +5,12 @@ abstract class JValue {
     constructor(id: string = Utils.uuid()) {
         this.id = id;
     }
-    public toString(): string {
-        return JSON.stringify(this.toJson());
+    public toString(pretty: boolean = false): string {
+        if (pretty) {
+            return JSON.stringify(this.toJson(), null, '  ');
+        } else {
+            return JSON.stringify(this.toJson());
+        }
     }
     public abstract toJson(): any;
     public abstract update(id: string, newValue: any): JValue;
@@ -160,11 +164,6 @@ namespace JsonAst {
             );
             return new JObject(fields);
         }
-    }
-
-
-    export function toText(value: JValue): string {
-        return "";
     }
 }
 
