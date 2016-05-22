@@ -1,4 +1,5 @@
-import {Utils, ObjectUtil} from "./utils";
+import {Utils} from "./utils";
+import * as R from "ramda";
 
 abstract class JValue {
     public id: string;
@@ -132,7 +133,7 @@ class JObject extends JValue {
         this.obj = obj;
     }
     public toJson(): {} {
-        return this.obj.reduce((acc: {}, cur: JField) => ObjectUtil.merge(acc, { [cur.name]: cur.value.toJson() }), {});
+        return this.obj.reduce((acc: {}, cur: JField) => R.merge(acc, { [cur.name]: cur.value.toJson() }), {});
     }
     public update(id: string, newValue: any): JObject {
         if (newValue instanceof JObject && this.id === id) {
