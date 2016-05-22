@@ -8,7 +8,7 @@ abstract class JValue {
     }
     public toString(pretty: boolean = false): string {
         if (pretty) {
-            return JSON.stringify(this.toJson(), null, '  ');
+            return JSON.stringify(this.toJson(), null, "  ");
         } else {
             return JSON.stringify(this.toJson());
         }
@@ -121,7 +121,7 @@ class JField extends JValue {
         if (typeof newValue === "string" && this.id === id) {
             const newKey: string = newValue as string;
             return new JField(newKey, this.value);
-        // update value
+            // update value
         } else {
             return new JField(this.key, this.value.update(id, newValue));
         }

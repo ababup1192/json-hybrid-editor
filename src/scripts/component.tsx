@@ -5,7 +5,7 @@ import {Dispatcher} from "./dispatcher";
 import {AceEditor} from "./reactAce.tsx";
 import {IComponentState} from "./definition";
 
-
+/*
 export class Component extends React.Component<IComponentState, IComponentState> {
     private dispatcher: Dispatcher;
     private action: ActionCreator;
@@ -47,3 +47,4 @@ export class Component extends React.Component<IComponentState, IComponentState>
         this.action.changeText(text);
     }
 }
+*/
