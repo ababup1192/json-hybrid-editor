@@ -26,8 +26,8 @@ class JNumber extends JValue {
     public toJson(): any {
         return this.value;
     }
-    public update(id: string, newValue: any): JNumber {
-        if (typeof newValue === "number" && this.id === id) {
+    public update(id: string, newValue: number): JNumber {
+        if (this.id === id) {
             return new JNumber(newValue);
         } else {
             return this;
@@ -44,8 +44,8 @@ class JString extends JValue {
     public toJson(): any {
         return this.value;
     }
-    public update(id: string, newValue: any): JString {
-        if (typeof newValue === "string" && this.id === id) {
+    public update(id: string, newValue: string): JString {
+        if (this.id === id) {
             return new JString(newValue);
         } else {
             return this;
@@ -62,8 +62,8 @@ class JBool extends JValue {
     public toJson(): any {
         return this.value;
     }
-    public update(id: string, newValue: any): JBool {
-        if (typeof newValue === "boolean" && this.id === id) {
+    public update(id: string, newValue: boolean): JBool {
+        if (this.id === id) {
             return new JBool(newValue);
         } else {
             return this;
@@ -106,22 +106,24 @@ class JArray extends JValue {
 }
 
 class JField extends JValue {
-    public name: string;
+    public key: string;
     public value: JValue;
-    constructor(name: string, value: JValue, id?: string) {
+    constructor(key: string, value: JValue, id?: string) {
         super(id);
-        this.name = name;
+        this.key = key;
         this.value = value;
     }
     public toJson(): {} {
-        return { [this.name]: this.value.toJson() };
+        return { [this.key]: this.value.toJson() };
     }
     public update(id: string, newValue: any): JField {
-        if (newValue instanceof JField && this.id === id) {
-            const newField: JField = newValue as JField;
-            return new JField(newField.name, newField.value);
+        // rename Jfield key
+        if (typeof newValue === "string" && this.id === id) {
+            const newKey: string = newValue as string;
+            return new JField(newKey, this.value);
+        // update value
         } else {
-            return new JField(this.name, this.value.update(id, newValue));
+            return new JField(this.key, this.value.update(id, newValue));
         }
     }
 }
@@ -133,7 +135,7 @@ class JObject extends JValue {
         this.obj = obj;
     }
     public toJson(): {} {
-        return this.obj.reduce((acc: {}, cur: JField) => R.merge(acc, { [cur.name]: cur.value.toJson() }), {});
+        return this.obj.reduce((acc: {}, cur: JField) => R.merge(acc, { [cur.key]: cur.value.toJson() }), {});
     }
     public update(id: string, newValue: any): JObject {
         if (newValue instanceof JObject && this.id === id) {
