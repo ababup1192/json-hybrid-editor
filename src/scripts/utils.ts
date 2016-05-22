@@ -33,7 +33,7 @@ export namespace Utils {
     }
 }
 
-export namespace List {
+export namespace ListUtil {
     "use strict";
 
     export function update<A>(list: A[], p: (a: A, index: number, array: A[]) => boolean, newA: A): A[] {
@@ -46,4 +46,21 @@ export namespace List {
             return changedList;
         }
     }
+}
+
+export namespace ObjectUtil {
+    export function merge(obj1: {}, obj2: {}): {} {
+        const newObject: {} = {};
+        for (let key in obj1) {
+            if (obj1.hasOwnProperty(key)) {
+                newObject[key] = obj1[key];
+            }
+        }
+        for (let key in obj2) {
+            if (obj2.hasOwnProperty(key)) {
+                newObject[key] = obj2[key];
+            }
+        }
+        return newObject;
+    };
 }

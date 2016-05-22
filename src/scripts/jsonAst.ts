@@ -1,11 +1,14 @@
-import {Utils} from "./utils";
+import {Utils, ObjectUtil} from "./utils";
 
 abstract class JValue {
     public id: string;
     constructor(id: string = Utils.uuid()) {
         this.id = id;
     }
-    public abstract toString(): string;
+    public toString(): string {
+        return JSON.stringify(this.toJson());
+    }
+    public abstract toJson(): any;
     public abstract update(id: string, newValue: any): JValue;
 }
 
@@ -15,8 +18,8 @@ class JNumber extends JValue {
         super(id);
         this.value = value;
     }
-    public toString(): string {
-        return this.value.toString();
+    public toJson(): any {
+        return this.value;
     }
     public update(id: string, newValue: any): JNumber {
         if (typeof newValue === "number" && this.id === id) {
@@ -33,8 +36,8 @@ class JString extends JValue {
         super(id);
         this.value = value;
     }
-    public toString(): string {
-        return `"${this.value}"`;
+    public toJson(): any {
+        return this.value;
     }
     public update(id: string, newValue: any): JString {
         if (typeof newValue === "string" && this.id === id) {
@@ -51,8 +54,8 @@ class JBool extends JValue {
         super(id);
         this.value = value;
     }
-    public toString(): string {
-        return JSON.stringify(this.value);
+    public toJson(): any {
+        return this.value;
     }
     public update(id: string, newValue: any): JBool {
         if (typeof newValue === "boolean" && this.id === id) {
@@ -67,8 +70,8 @@ class JNull extends JValue {
     constructor(id?: string) {
         super(id);
     }
-    public toString(): string {
-        return "null";
+    public toJson(): any {
+        return null;
     }
     public update(id: string, newValue: JValue): JValue {
         if (this.id === id) {
@@ -85,10 +88,10 @@ class JArray extends JValue {
         super(id);
         this.arr = arr;
     }
-    public toString(): string {
-        return `[${this.arr.map((value: JValue) => value.toString()).join(", ")}]`;
+    public toJson(): any[] {
+        return this.arr.map((v: JValue) => v.toJson());
     }
-    public update(id: string, newValue: any): JValue {
+    public update(id: string, newValue: any): JArray {
         if (newValue instanceof JArray && this.id === id) {
             return newValue;
         } else {
@@ -105,10 +108,10 @@ class JField extends JValue {
         this.name = name;
         this.value = value;
     }
-    public toString(): string {
-        return `${this.name}: ${this.value.toString()}`;
+    public toJson(): {} {
+        return { [this.name]: this.value.toJson() };
     }
-    public update(id: string, newValue: any): JValue {
+    public update(id: string, newValue: any): JField {
         if (newValue instanceof JField && this.id === id) {
             const newField: JField = newValue as JField;
             return new JField(newField.name, newField.value);
@@ -124,10 +127,10 @@ class JObject extends JValue {
         super(id);
         this.obj = obj;
     }
-    public toString(): string {
-        return `{${this.obj.map((value: JField) => value.toString()).join(", ")}}`;
+    public toJson(): {} {
+        return this.obj.reduce((acc: {}, cur: JField) => ObjectUtil.merge(acc, { [cur.name]: cur.value.toJson() }), {});
     }
-    public update(id: string, newValue: any): JValue {
+    public update(id: string, newValue: any): JObject {
         if (newValue instanceof JObject && this.id === id) {
             return new JObject((newValue as JObject).obj);
         } else {
