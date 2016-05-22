@@ -39,14 +39,14 @@ describe("Json", () => {
             it("should return `JObject`", () => {
                 const jObject: JObject = JsonAst.toAst(
                     JSON.parse(JSON.stringify({ a: 123, b: 456, c: 789 }))) as JObject;
-                const actual: { name: string, value: number }[] = jObject.obj.map((v: JField) => {
-                    return { name: v.name, value: (v.value as JNumber).value };
+                const actual: { key: string, value: number }[] = jObject.obj.map((v: JField) => {
+                    return { key: v.key, value: (v.value as JNumber).value };
                 });
 
                 chai.assert.strictEqual(JSON.stringify(actual), JSON.stringify([
-                    { name: "a", value: 123 },
-                    { name: "b", value: 456 },
-                    { name: "c", value: 789 }
+                    { key: "a", value: 123 },
+                    { key: "b", value: 456 },
+                    { key: "c", value: 789 }
                 ]));
             });
         });
@@ -55,21 +55,21 @@ describe("Json", () => {
                 const jObject: JObject = JsonAst.toAst(
                     JSON.parse(JSON.stringify({ a: "start", b: { x: [1], y: [true], z: [null] }, c: "end" }))
                 ) as JObject;
-                const toObject: (jValue: JValue) => { name: string, value: any } = (jValue: JValue) => {
+                const toObject: (jValue: JValue) => { key: string, value: any } = (jValue: JValue) => {
                     if (jValue instanceof JNumber) {
-                        return { name: "", value: (jValue as JNumber).value };
+                        return { key: "", value: (jValue as JNumber).value };
                     } else if (jValue instanceof JString) {
-                        return { name: "", value: (jValue as JString).value };
+                        return { key: "", value: (jValue as JString).value };
                     } else if (jValue instanceof JBool) {
-                        return { name: "", value: (jValue as JBool).value };
+                        return { key: "", value: (jValue as JBool).value };
                     } else if (jValue instanceof JNull) {
-                        return { name: "", value: null };
+                        return { key: "", value: null };
                     } else if (jValue instanceof JArray) {
-                        return { name: "", value: (jValue as JArray).arr.map((value: JValue) => toObject(value)) };
+                        return { key: "", value: (jValue as JArray).arr.map((value: JValue) => toObject(value)) };
                     } else {
                         return {
-                            name: "", value: (jValue as JObject).obj.map((field: JField) => {
-                                return { name: field.name, value: toObject(field.value) };
+                            key: "", value: (jValue as JObject).obj.map((field: JField) => {
+                                return { key: field.key, value: toObject(field.value) };
                             })
                         };
                     }
@@ -77,19 +77,19 @@ describe("Json", () => {
 
                 chai.assert.strictEqual(JSON.stringify(toObject(jObject)), JSON.stringify(
                     {
-                        name: "", value: [
-                            { name: "a", value: { name: "", value: "start" } },
+                        key: "", value: [
+                            { key: "a", value: { key: "", value: "start" } },
                             {
-                                name: "b", value: {
-                                    name: "",
+                                key: "b", value: {
+                                    key: "",
                                     value: [
-                                        { name: "x", value: { name: "", value: [{ name: "", value: 1 }] } },
-                                        { name: "y", value: { name: "", value: [{ name: "", value: true }] } },
-                                        { name: "z", value: { name: "", value: [{ name: "", value: null }] } }
+                                        { key: "x", value: { key: "", value: [{ key: "", value: 1 }] } },
+                                        { key: "y", value: { key: "", value: [{ key: "", value: true }] } },
+                                        { key: "z", value: { key: "", value: [{ key: "", value: null }] } }
                                     ],
                                 },
                             },
-                            { name: "c", value: { name: "", value: "end" } }
+                            { key: "c", value: { key: "", value: "end" } }
                         ],
                     }
                 ));
@@ -189,7 +189,8 @@ describe("Json", () => {
         });
         describe("JField", () => {
             it("should return new `JField`", () => {
-                const actual: JField = new JField("abc", new JNumber(1), "1").update("1", new JField("def", new JNumber(2))) as JField;
+                const actual: JField = new JField("abc", new JNumber(1, "2"), "1")
+                    .update("1", "def").update("2", 2) as JField;
                 chai.assert.strictEqual(
                     actual.toString(),
                     JSON.stringify({ def: 2 }));

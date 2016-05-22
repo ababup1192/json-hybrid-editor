@@ -31,6 +31,14 @@ export namespace Utils {
 
         return generate();
     }
+
+    export function forceEval<T, U>(fn: (t: T) => U, x: T): U {
+        try {
+            return fn(x);
+        } catch (e) {
+            return undefined;
+        }
+    }
 }
 
 export namespace ListUtil {
@@ -46,21 +54,4 @@ export namespace ListUtil {
             return changedList;
         }
     }
-}
-
-export namespace ObjectUtil {
-    export function merge(obj1: {}, obj2: {}): {} {
-        const newObject: {} = {};
-        for (let key in obj1) {
-            if (obj1.hasOwnProperty(key)) {
-                newObject[key] = obj1[key];
-            }
-        }
-        for (let key in obj2) {
-            if (obj2.hasOwnProperty(key)) {
-                newObject[key] = obj2[key];
-            }
-        }
-        return newObject;
-    };
 }
