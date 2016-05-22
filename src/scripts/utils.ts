@@ -32,3 +32,18 @@ export namespace Utils {
         return generate();
     }
 }
+
+export namespace List {
+    "use strict";
+
+    export function update<A>(list: A[], p: (a: A, index: number, array: A[]) => boolean, newA: A): A[] {
+        const filtered: A[] = list.filter(p);
+        if (filtered.length < 1) {
+            return list;
+        } else {
+            const changedList: A[] = list.concat();
+            changedList[list.indexOf(filtered[0])] = newA;
+            return changedList;
+        }
+    }
+}
