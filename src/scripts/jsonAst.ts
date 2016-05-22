@@ -91,7 +91,7 @@ class JArray extends JValue {
     public toJson(): any[] {
         return this.arr.map((v: JValue) => v.toJson());
     }
-    public update(id: string, newValue: any): JValue {
+    public update(id: string, newValue: any): JArray {
         if (newValue instanceof JArray && this.id === id) {
             return newValue;
         } else {
@@ -109,9 +109,9 @@ class JField extends JValue {
         this.value = value;
     }
     public toJson(): {} {
-        return { [this.name]: this.value };
+        return { [this.name]: this.value.toJson() };
     }
-    public update(id: string, newValue: any): JValue {
+    public update(id: string, newValue: any): JField {
         if (newValue instanceof JField && this.id === id) {
             const newField: JField = newValue as JField;
             return new JField(newField.name, newField.value);
@@ -130,7 +130,7 @@ class JObject extends JValue {
     public toJson(): {} {
         return this.obj.reduce((acc: {}, cur: JField) => ObjectUtil.merge(acc, { [cur.name]: cur.value.toJson() }), {});
     }
-    public update(id: string, newValue: any): JValue {
+    public update(id: string, newValue: any): JObject {
         if (newValue instanceof JObject && this.id === id) {
             return new JObject((newValue as JObject).obj);
         } else {

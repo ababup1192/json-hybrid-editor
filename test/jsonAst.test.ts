@@ -153,4 +153,60 @@ describe("Json", () => {
             });
         });
     });
+    describe("JsonAst Update", () => {
+        describe("JNumber", () => {
+            it("should return new `JNumber`", () => {
+                const actual: JNumber = new JNumber(1, "1").update("1", 100);
+                chai.assert.strictEqual(actual.value, new JNumber(100).value);
+            });
+        });
+        describe("JString", () => {
+            it("should return new `JString`", () => {
+                const actual: JString = new JString("abc", "1").update("1", "def");
+                chai.assert.strictEqual(actual.value, new JString("def").value);
+            });
+        });
+        describe("JBool", () => {
+            it("should return new `JBool`", () => {
+                const actual: JBool = new JBool(true, "1").update("1", false);
+                chai.assert.strictEqual(actual.value, new JBool(false).value);
+            });
+        });
+        describe("JNull", () => {
+            it("should return new `JNumber`", () => {
+                const actual: JValue = new JNull("1").update("1", new JNumber(1));
+                chai.assert.strictEqual((actual as JNumber).value, new JNumber(1).value);
+            });
+        });
+        describe("JArray", () => {
+            it("should return new `JArray`", () => {
+                const actual: JArray = new JArray([new JNumber(1, "2"), new JNumber(2, "3"),
+                    new JNumber(3, "4")]).update("3", 100);
+                chai.assert.strictEqual(
+                    actual.toString(),
+                    JSON.stringify([1, 100, 3]));
+            });
+        });
+        describe("JField", () => {
+            it("should return new `JField`", () => {
+                const actual: JField = new JField("abc", new JNumber(1), "1").update("1", new JField("def", new JNumber(2))) as JField;
+                chai.assert.strictEqual(
+                    actual.toString(),
+                    JSON.stringify({ def: 2 }));
+            });
+        });
+        describe("JObject", () => {
+            it("should return new `JObject`", () => {
+                const actual: JObject = new JObject([
+                    new JField("a", new JNumber(1, "1a"), "1"),
+                    new JField("b", new JNumber(2, "2a"), "2"),
+                    new JField("c", new JNumber(3, "3a"), "3"),
+                    new JField("d", new JNumber(4, "4a"), "4"),
+                ]).update("3a", 100);
+                chai.assert.strictEqual(
+                    actual.toString(),
+                    JSON.stringify({ a: 1, b: 2, c: 100, d: 4 }));
+            });
+        });
+    });
 });
