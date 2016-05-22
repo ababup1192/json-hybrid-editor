@@ -2,6 +2,7 @@ import * as Bacon from "baconjs";
 import {Dispatcher} from "./dispatcher";
 import {Constant} from "./constant";
 import {JValue, JNumber, JString, JBool, JNull, JArray, JField, JObject, JsonAst} from "./jsonAst";
+import {Utils} from "./utils"
 
 export class ActionCreator {
     private d: Dispatcher;
@@ -15,15 +16,10 @@ export class ActionCreator {
     }
 
     public createProperty(initialValue: string): Bacon.Property<JValue, JValue> {
-        try {
-            return Bacon.update<any, any, JValue>(JsonAst.toAst(JSON.parse(initialValue)),
-                [this.d.stream(Constant.CHANGE_TEXT)], this._changeText
-            );
-        } catch (e) {
-            return Bacon.update<any, any, JValue>(undefined,
-                [this.d.stream(Constant.CHANGE_TEXT)], this._changeText
-            );
-        }
+        const json: any = Utils.forceEval<String, JValue>(JSON.parse, initialValue);
+        return Bacon.update<any, any, JValue>(JsonAst.toAst(json),
+            [this.d.stream(Constant.CHANGE_TEXT)], this._changeText
+        );
     }
 
     private _changeText(ast: JValue, json: string): JValue {

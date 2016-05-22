@@ -31,6 +31,14 @@ export namespace Utils {
 
         return generate();
     }
+
+    export function forceEval<T, U>(fn: (t: T) => U, x: T): U {
+        try {
+            return fn(x);
+        } catch (e) {
+            return undefined;
+        }
+    }
 }
 
 export namespace ListUtil {
