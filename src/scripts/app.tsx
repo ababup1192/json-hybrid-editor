@@ -22,9 +22,9 @@ export class App extends React.Component<any, IAppState> {
     this.action = new ActionCreator(this.dispatcher);
   }
   public componentDidMount(): void {
-    this.action.createProperty(`{"a": 123}`).onValue((value: JValue) => {
-      this.setState({ ast: value });
-    });
+    this.action.createProperty("123").onValue((value: JValue) =>
+      this.setState({ ast: value })
+    );
   }
   public render(): JSX.Element {
     return <div className="container">

@@ -24,10 +24,9 @@ interface IJNumberProps {
     onUpdateAst: (id: string, num: number) => void;
 }
 
-class JNumberComponent extends React.Component<IJNumberProps, { value: number }> {
+class JNumberComponent extends React.Component<IJNumberProps, any> {
     constructor(props: IJNumberProps) {
         super(props);
-        this.state = { value: this.props.jNumber.value };
     }
     public render(): JSX.Element {
         return <div className="input-group">
@@ -35,13 +34,11 @@ class JNumberComponent extends React.Component<IJNumberProps, { value: number }>
                 <span className="glyphicon glyphicon-sort-by-order"></span>
             </span>
             <input type="number" className="form-control"
-                value={ this.state.value } onChange={ this.onChange.bind(this) } />
+                value={ this.props.jNumber.value } onChange={ this.onChange.bind(this) } />
         </div>;
     }
     private onChange(e): void {
         const num: number = Number(e.target.value);
-        this.setState({ value: num });
-
         if (this.props.onUpdateAst) {
             this.props.onUpdateAst(this.props.jNumber.id, num);
         }
@@ -53,10 +50,9 @@ interface IJStringProps {
     onUpdateAst: (id: string, text: string) => void;
 }
 
-class JStringComponent extends React.Component<IJStringProps, { value: string }> {
+class JStringComponent extends React.Component<IJStringProps, any> {
     constructor(props: IJStringProps) {
         super(props);
-        this.state = { value: this.props.jString.value };
     }
     public render(): JSX.Element {
         return <div className="input-group">
@@ -64,12 +60,10 @@ class JStringComponent extends React.Component<IJStringProps, { value: string }>
                 <span className="glyphicon glyphicon-text-background"></span>
             </span>
             <input type="text" className="form-control"
-                value={ this.state.value } onChange={ this.onChange.bind(this) } />
+                value={ this.props.jString.value } onChange={ this.onChange.bind(this) } />
         </div>;
     }
     private onChange(text: string): void {
-        this.setState({ value: text });
-
         if (this.props.onUpdateAst) {
             this.props.onUpdateAst(this.props.jString.id, text);
         }
@@ -81,10 +75,9 @@ interface IJBoolProps {
     onUpdateAst: (id: string, value: boolean) => void;
 }
 
-class JBoolComponent extends React.Component<IJBoolProps, { value: boolean }> {
+class JBoolComponent extends React.Component<IJBoolProps, any> {
     constructor(props: IJBoolProps) {
         super(props);
-        this.state = { value: this.props.jBool.value };
     }
     public render(): JSX.Element {
         return <div className="input-group">
@@ -92,12 +85,10 @@ class JBoolComponent extends React.Component<IJBoolProps, { value: boolean }> {
                 <span className="glyphicon glyphicon-text-background"></span>
             </span>
             <input type="text" className="form-control"
-                value={ this.state.value } onClick={ this.onChange.bind(this) } />
+                value={ this.props.jBool.value } onClick={ this.onChange.bind(this) } />
         </div>;
     }
     private onChange(value: boolean): void {
-        this.setState({ value: value });
-
         if (this.props.onUpdateAst) {
             this.props.onUpdateAst(this.props.jBool.id, value);
         }
