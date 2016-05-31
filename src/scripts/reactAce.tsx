@@ -42,9 +42,7 @@ export class AceEditor extends React.Component<IAceEditorProps, { text: string }
     }
 
     public componentWillReceiveProps(nextProps: IAceEditorProps): void {
-        if (this.state.text !== nextProps.text) {
-            this.editor.getSession().setValue(nextProps.text);
-        }
+        this.editor.getSession().setValue(nextProps.text);
     }
 
     public render(): JSX.Element {

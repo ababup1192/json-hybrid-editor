@@ -84,22 +84,27 @@ interface IJBoolProps {
     onUpdateAst: (id: string, value: boolean) => void;
 }
 
-class JBoolComponent extends React.Component<IJBoolProps, any> {
+class JBoolComponent extends React.Component<IJBoolProps, { value: boolean }> {
     constructor(props: IJBoolProps) {
         super(props);
+        this.state = { value: props.jBool.value };
     }
     public render(): JSX.Element {
         return <div className="input-group">
-            <span className="input-group-addon">
-                <span className="glyphicon glyphicon-text-background"></span>
-            </span>
-            <input type="text" className="form-control"
-                value={ this.props.jBool.value } onClick={ this.onChange.bind(this) } />
+            <input className="tgl tgl-skewed" type="checkbox"
+                checked={ this.state.value } onChange={this.onChange.bind(this) } />
+            <label className="tgl-btn" data-tg-off="false" data-tg-on="true"
+                onClick={ this.onClick.bind(this) } />
         </div>;
     }
-    private onChange(value: boolean): void {
+    private onClick(e: any): void {
+        this.onChange(e);
+    }
+    private onChange(e: any): void {
+        const nowValue: boolean = !this.state.value;
+        this.setState({ value: nowValue });
         if (this.props.onUpdateAst) {
-            this.props.onUpdateAst(this.props.jBool.id, value);
+            this.props.onUpdateAst(this.props.jBool.id, nowValue);
         }
     }
 }
@@ -238,7 +243,7 @@ class JObjectComponent extends React.Component<IObjectProps, any> {
         super(props);
     }
     public componentDidMount(): void {
-        // open-close-child
+        // open-close-tree
         JsonTree.view();
     }
     public render(): JSX.Element {
