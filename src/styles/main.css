@@ -1,9 +1,9 @@
-.container {
-   margin-top: 20px;
+#content {
+  margin-top: 20px;
 }
 
 .visual-editor {
     border: 2px solid grey;
-    height: 500px;
+    height: 100%;
     padding: 10px;
 }

@@ -28,7 +28,7 @@ class JNumber extends JValue {
     }
     public update(id: string, newValue: number): JNumber {
         if (this.id === id) {
-            return new JNumber(newValue);
+            return new JNumber(newValue, id);
         } else {
             return this;
         }
@@ -46,7 +46,7 @@ class JString extends JValue {
     }
     public update(id: string, newValue: string): JString {
         if (this.id === id) {
-            return new JString(newValue);
+            return new JString(newValue, id);
         } else {
             return this;
         }
@@ -64,7 +64,7 @@ class JBool extends JValue {
     }
     public update(id: string, newValue: boolean): JBool {
         if (this.id === id) {
-            return new JBool(newValue);
+            return new JBool(newValue, id);
         } else {
             return this;
         }

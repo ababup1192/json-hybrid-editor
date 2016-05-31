@@ -9,7 +9,7 @@ import "brace/theme/solarized_light";
 import "brace/mode/javascript";
 
 // import Style Sheet
-// import "../styles/main.css";
+import "../styles/main.css";
 import "../styles/toggleButton.css";
 import "../styles/jsonTree.css";
 

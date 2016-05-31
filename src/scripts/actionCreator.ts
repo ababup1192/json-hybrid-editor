@@ -8,6 +8,11 @@ interface IUpdateObject {
     id: string;
     newValue: any;
 }
+export interface AppEventObject {
+    ast: JValue;
+    isTextChange: boolean;
+    isVisualChange: boolean;
+}
 
 export class ActionCreator {
     private d: Dispatcher;
@@ -24,24 +29,37 @@ export class ActionCreator {
         this.d.push(Constant.UPDATE_AST, updateObject);
     }
 
-    public createProperty(initialValue: string): Bacon.Property<JValue, JValue> {
+    public createProperty(initialValue: string): Bacon.Property<JValue, AppEventObject> {
         const json: any = Utils.forceEval<String, JValue>(JSON.parse, initialValue);
-        return Bacon.update<JValue, string, IUpdateObject, JValue>(JsonAst.toAst(json),
+        const appEventObject: AppEventObject = {
+            ast: JsonAst.toAst(json),
+            isTextChange: true,
+            isVisualChange: true,
+        }
+        return Bacon.update<JValue, string, IUpdateObject, any>(JsonAst.toAst(json),
             [this.d.stream(Constant.CHANGE_TEXT)], this._changeText,
             [this.d.stream(Constant.UPDATE_AST)], this._updateAst
         );
     }
 
-    private _changeText(ast: JValue, json: string): JValue {
+    private _changeText(ast: JValue, json: string): AppEventObject {
         try {
-            return JsonAst.toAst(JSON.parse(json));
+            return {
+                ast: JsonAst.toAst(JSON.parse(json)),
+                isTextChange: false,
+                isVisualChange: true,
+            };
         } catch (e) {
-            return ast;
+            return { ast: ast, isTextChange: false, isVisualChange: false };
         }
     }
 
-    private _updateAst(ast: JValue, updateObject: IUpdateObject): JValue {
+    private _updateAst(appEventObject: AppEventObject, updateObject: IUpdateObject): AppEventObject {
         const {id, newValue}: IUpdateObject = updateObject;
-        return ast.update(id, newValue);
+        return {
+            ast: appEventObject.ast.update(id, newValue),
+            isTextChange: true,
+            isVisualChange: false,
+        };
     }
 }
